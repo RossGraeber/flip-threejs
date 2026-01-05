@@ -15,8 +15,7 @@ export { Face } from './core/Face';
 export { IntrinsicTriangulation } from './core/IntrinsicTriangulation';
 
 // Geometry utilities
-export { Vector2 } from './geometry/Vector2';
 export { GeometricUtils } from './geometry/GeometricUtils';
 
 // Version
-export const VERSION = '0.1.0';
+export const VERSION = '0.1.1';

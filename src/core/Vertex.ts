@@ -1,3 +1,4 @@
+import type { Vector3 } from 'three';
 import type { VertexId } from '../types';
 import type { Halfedge } from './Edge';
 
@@ -26,7 +27,7 @@ export class Vertex {
     /**
      * 3D position of this vertex in the original mesh.
      */
-    public readonly position: { x: number; y: number; z: number }
+    public readonly position: Vector3
   ) {}
 
   /**
