@@ -127,10 +127,7 @@ export class Vector2 {
   rotate(angleRadians: number): Vector2 {
     const cos = Math.cos(angleRadians);
     const sin = Math.sin(angleRadians);
-    return new Vector2(
-      this.x * cos - this.y * sin,
-      this.x * sin + this.y * cos
-    );
+    return new Vector2(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
   }
 
   /**

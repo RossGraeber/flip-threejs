@@ -21,9 +21,7 @@ export class GeometricUtils {
     // Law of cosines: c² = a² + b² - 2ab*cos(C)
     // Solving for angle C: cos(C) = (a² + b² - c²) / (2ab)
     const numerator =
-      adjacentSide1 * adjacentSide1 +
-      adjacentSide2 * adjacentSide2 -
-      oppositeSide * oppositeSide;
+      adjacentSide1 * adjacentSide1 + adjacentSide2 * adjacentSide2 - oppositeSide * oppositeSide;
     const denominator = 2 * adjacentSide1 * adjacentSide2;
 
     if (denominator === 0) {
@@ -216,7 +214,7 @@ export class GeometricUtils {
   /**
    * Computes the circumcenter of a triangle given its three vertices.
    */
-  static circumcenter2D(p0: Vector2, p1: Vector2, p2: Vector2): Vector2 {
+  static circumcenter2D(p0: Vector2, p1: Vector2, p2: Vector2): { x: number; y: number } {
     const ax = p1.x - p0.x;
     const ay = p1.y - p0.y;
     const bx = p2.x - p0.x;

@@ -90,6 +90,7 @@ export class IntrinsicTriangulation {
         const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
         // Create edge with null halfedge placeholder (will be set later)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         edge = new Edge(createEdgeId(triangulation.nextEdgeId++), null as any, length);
         edgeMap.set(key, edge);
         triangulation.edges.set(edge.id, edge);
@@ -122,21 +123,9 @@ export class IntrinsicTriangulation {
       triangulation.faces.set(face.id, face);
 
       // Create halfedges
-      const he01 = new Halfedge(
-        createHalfedgeId(triangulation.nextHalfedgeId++),
-        v1,
-        edge01
-      );
-      const he12 = new Halfedge(
-        createHalfedgeId(triangulation.nextHalfedgeId++),
-        v2,
-        edge12
-      );
-      const he20 = new Halfedge(
-        createHalfedgeId(triangulation.nextHalfedgeId++),
-        v0,
-        edge20
-      );
+      const he01 = new Halfedge(createHalfedgeId(triangulation.nextHalfedgeId++), v1, edge01);
+      const he12 = new Halfedge(createHalfedgeId(triangulation.nextHalfedgeId++), v2, edge12);
+      const he20 = new Halfedge(createHalfedgeId(triangulation.nextHalfedgeId++), v0, edge20);
 
       triangulation.halfedges.set(he01.id, he01);
       triangulation.halfedges.set(he12.id, he12);
@@ -332,12 +321,10 @@ export class IntrinsicTriangulation {
     const f0 = he0.face;
     const f1 = he1.face;
 
-    // Get vertices
-    const v0 = he0.prev!.vertex;
+    // Get the edge vertex (v1 is shared by both triangles)
     const v1 = he0.vertex;
-    const v2 = he1.prev!.vertex;
 
-    // Get opposite angles (angles at v0 and v2)
+    // Get opposite angles (angles at vertices not on the edge)
     const angle0 = f0.getOppositeAngle(v1);
     const angle2 = f1.getOppositeAngle(v1);
 

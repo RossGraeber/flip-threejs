@@ -9,9 +9,15 @@ describe('IntrinsicTriangulation', () => {
 
       // Create a single triangle
       const positions = new Float32Array([
-        0, 0, 0, // v0
-        1, 0, 0, // v1
-        0, 1, 0, // v2
+        0,
+        0,
+        0, // v0
+        1,
+        0,
+        0, // v1
+        0,
+        1,
+        0, // v2
       ]);
 
       const indices = new Uint32Array([0, 1, 2]);
@@ -34,15 +40,27 @@ describe('IntrinsicTriangulation', () => {
       // Triangle 1: v0-v1-v2
       // Triangle 2: v1-v3-v2
       const positions = new Float32Array([
-        0, 0, 0, // v0
-        1, 0, 0, // v1
-        0, 1, 0, // v2
-        1, 1, 0, // v3
+        0,
+        0,
+        0, // v0
+        1,
+        0,
+        0, // v1
+        0,
+        1,
+        0, // v2
+        1,
+        1,
+        0, // v3
       ]);
 
       const indices = new Uint32Array([
-        0, 1, 2, // Triangle 1
-        1, 3, 2, // Triangle 2
+        0,
+        1,
+        2, // Triangle 1
+        1,
+        3,
+        2, // Triangle 2
       ]);
 
       geometry.setAttribute('position', new BufferAttribute(positions, 3));
@@ -60,16 +78,21 @@ describe('IntrinsicTriangulation', () => {
       const geometry = new BufferGeometry();
 
       const positions = new Float32Array([
-        0, 0, 0, // v0
-        1, 0, 0, // v1
-        0, 1, 0, // v2
-        1, 1, 0, // v3
+        0,
+        0,
+        0, // v0
+        1,
+        0,
+        0, // v1
+        0,
+        1,
+        0, // v2
+        1,
+        1,
+        0, // v3
       ]);
 
-      const indices = new Uint32Array([
-        0, 1, 2,
-        1, 3, 2,
-      ]);
+      const indices = new Uint32Array([0, 1, 2, 1, 3, 2]);
 
       geometry.setAttribute('position', new BufferAttribute(positions, 3));
       geometry.setIndex(new BufferAttribute(indices, 1));
@@ -96,9 +119,15 @@ describe('IntrinsicTriangulation', () => {
 
       // Create a right triangle with known side lengths
       const positions = new Float32Array([
-        0, 0, 0, // v0
-        3, 0, 0, // v1
-        0, 4, 0, // v2
+        0,
+        0,
+        0, // v0
+        3,
+        0,
+        0, // v1
+        0,
+        4,
+        0, // v2
       ]);
 
       const indices = new Uint32Array([0, 1, 2]);
@@ -157,15 +186,27 @@ describe('IntrinsicTriangulation', () => {
 
       // Create a quad as two triangles
       const positions = new Float32Array([
-        0, 0, 0, // v0
-        1, 0, 0, // v1
-        1, 1, 0, // v2
-        0, 1, 0, // v3
+        0,
+        0,
+        0, // v0
+        1,
+        0,
+        0, // v1
+        1,
+        1,
+        0, // v2
+        0,
+        1,
+        0, // v3
       ]);
 
       const indices = new Uint32Array([
-        0, 1, 2, // Triangle 1: v0-v1-v2
-        0, 2, 3, // Triangle 2: v0-v2-v3
+        0,
+        1,
+        2, // Triangle 1: v0-v1-v2
+        0,
+        2,
+        3, // Triangle 2: v0-v2-v3
       ]);
 
       geometry.setAttribute('position', new BufferAttribute(positions, 3));
@@ -186,8 +227,6 @@ describe('IntrinsicTriangulation', () => {
 
       // Get original halfedge configuration
       const he0 = interiorEdge!.halfedge;
-      const he1 = he0.twin!;
-      const originalV0 = he0.prev!.vertex;
       const originalV1 = he0.vertex;
 
       // Flip the edge
@@ -202,11 +241,7 @@ describe('IntrinsicTriangulation', () => {
     it('should not flip a boundary edge', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -225,12 +260,7 @@ describe('IntrinsicTriangulation', () => {
     it('should maintain mesh connectivity after flip', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        1, 1, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2, 0, 2, 3]);
 
@@ -264,11 +294,7 @@ describe('IntrinsicTriangulation', () => {
     it('should return true for boundary edges', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -289,16 +315,21 @@ describe('IntrinsicTriangulation', () => {
       // Create a quad where the diagonal is non-Delaunay
       // Use positions that create large opposite angles
       const positions = new Float32Array([
-        0, 0, 0,    // v0
-        1, 0, 0,    // v1
-        0.9, 0.1, 0, // v2 - close to v1
-        0.1, 0.9, 0, // v3 - close to v0
+        0,
+        0,
+        0, // v0
+        1,
+        0,
+        0, // v1
+        0.9,
+        0.1,
+        0, // v2 - close to v1
+        0.1,
+        0.9,
+        0, // v3 - close to v0
       ]);
 
-      const indices = new Uint32Array([
-        0, 1, 2,
-        0, 2, 3,
-      ]);
+      const indices = new Uint32Array([0, 1, 2, 0, 2, 3]);
 
       geometry.setAttribute('position', new BufferAttribute(positions, 3));
       geometry.setIndex(new BufferAttribute(indices, 1));
@@ -327,12 +358,7 @@ describe('IntrinsicTriangulation', () => {
     it('should converge on a simple mesh', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        1, 1, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2, 0, 2, 3]);
 
@@ -355,11 +381,7 @@ describe('IntrinsicTriangulation', () => {
       const geometry = new BufferGeometry();
 
       // Equilateral triangle is already Delaunay
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0.5, Math.sqrt(3) / 2, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0.5, Math.sqrt(3) / 2, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -378,11 +400,7 @@ describe('IntrinsicTriangulation', () => {
     it('should return all vertices', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -400,11 +418,7 @@ describe('IntrinsicTriangulation', () => {
     it('should return all edges', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -422,11 +436,7 @@ describe('IntrinsicTriangulation', () => {
     it('should return all faces', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 
@@ -444,11 +454,7 @@ describe('IntrinsicTriangulation', () => {
     it('should return all halfedges', () => {
       const geometry = new BufferGeometry();
 
-      const positions = new Float32Array([
-        0, 0, 0,
-        1, 0, 0,
-        0, 1, 0,
-      ]);
+      const positions = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
 
       const indices = new Uint32Array([0, 1, 2]);
 

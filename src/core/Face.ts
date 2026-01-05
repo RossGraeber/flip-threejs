@@ -101,7 +101,7 @@ export class Face {
       const angle2 = GeometricUtils.angleFromSides(len01, len12, len20);
 
       return [angle0, angle1, angle2];
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -147,7 +147,7 @@ export class Face {
 
     try {
       return GeometricUtils.triangleArea(a, b, c);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
