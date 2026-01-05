@@ -36,26 +36,30 @@ pnpm add flip-threejs three
 
 ```typescript
 import * as THREE from 'three';
-import { FlipEdgeNetwork } from 'flip-threejs';
+import { FlipEdgeNetwork, createVertexId } from 'flip-threejs';
 
 // Create or load a Three.js mesh
-const geometry = new THREE.SphereGeometry(1, 32, 32);
-const mesh = new THREE.Mesh(geometry, material);
+const geometry = new THREE.IcosahedronGeometry(1, 2);
 
 // Compute geodesic path between two vertices
-const network = FlipEdgeNetwork.fromDijkstraPath(mesh, 0, 500);
+const network = FlipEdgeNetwork.fromDijkstraPath(
+  geometry,
+  createVertexId(0),
+  createVertexId(40)
+);
 
 // Shorten to exact geodesic
 network.iterativeShorten();
 
 // Get path as 3D points for visualization
-const pathPoints = network.getPathPolyline3D();
+const pathPoints = network.getPathPolyline3D()[0];
 
 // Create a line to visualize the geodesic
-const pathGeometry = new THREE.BufferGeometry().setFromPoints(pathPoints[0]);
+const points = pathPoints.map(p => new THREE.Vector3(p.x, p.y, p.z));
+const pathGeometry = new THREE.BufferGeometry().setFromPoints(points);
 const pathLine = new THREE.Line(
   pathGeometry,
-  new THREE.LineBasicMaterial({ color: 0xff0000 })
+  new THREE.LineBasicMaterial({ color: 0xff0000, linewidth: 2 })
 );
 scene.add(pathLine);
 ```
@@ -77,18 +81,29 @@ The algorithm starts with an initial edge path (e.g., from Dijkstra's algorithm)
 ### Construction
 
 ```typescript
-// From Dijkstra shortest path
-const network = FlipEdgeNetwork.fromDijkstraPath(mesh, startVertex, endVertex);
+import { createVertexId } from 'flip-threejs';
 
-// From multiple waypoints
-const network = FlipEdgeNetwork.fromPiecewiseDijkstraPath(
-  mesh,
-  [v0, v1, v2, v3],
-  true // mark interior vertices
+// From Dijkstra shortest path
+const network = FlipEdgeNetwork.fromDijkstraPath(
+  geometry,
+  createVertexId(0),
+  createVertexId(100)
 );
 
-// From custom edge paths
-const network = new FlipEdgeNetwork(mesh, paths, markedVertices);
+// From multiple waypoints
+const waypoints = [0, 25, 50, 75, 100].map(createVertexId);
+const network = FlipEdgeNetwork.fromPiecewiseDijkstraPath(
+  geometry,
+  waypoints,
+  true // mark interior vertices for Bezier curves
+);
+
+// From custom configuration
+const network = new FlipEdgeNetwork(triangulation, paths, markedVertices, {
+  maxIterations: 1000,
+  convergenceThreshold: 1e-10,
+  verbose: true
+});
 ```
 
 ### Path Shortening
@@ -117,16 +132,16 @@ const allEdges = network.getAllEdgePolyline3D();
 ### Advanced Features
 
 ```typescript
-// Geodesic Bezier curves (requires marked control points)
-network.bezierSubdivide(4); // 4 rounds of subdivision
+import { BezierSubdivision } from 'flip-threejs';
 
-// Delaunay refinement for better triangle quality
-network.delaunayRefine(0.1, 1000, 25);
+// Geodesic Bezier curves (requires marked control points)
+BezierSubdivision.subdivide(network, 4); // 4 rounds of subdivision
 
 // Query methods
 const length = network.getLength();
 const minAngle = network.minAngleIsotopy();
-const isInPath = network.edgeInPath(edgeId);
+const isInPath = network.edgeInPath(edge);
+const isGeodesic = network.findFlexibleJoint() === null;
 ```
 
 ## Use Cases
@@ -167,15 +182,23 @@ The algorithm is highly efficient:
 
 See the [examples/](examples/) directory for complete working examples:
 
-- **basic-geodesic**: Simple geodesic between two points
-- **bezier-curves**: Geodesic Bezier curves with control points
-- **mesh-paths**: Complex multi-path networks
+- **[simple-geodesic.ts](examples/simple-geodesic.ts)**: Basic geodesic path between two vertices
+- **[multi-waypoint.ts](examples/multi-waypoint.ts)**: Piecewise paths through multiple waypoints
+- **[examples/README.md](examples/README.md)**: Comprehensive guide with visualization tips
+
+Run the examples:
+
+```bash
+npx ts-node examples/simple-geodesic.ts
+npx ts-node examples/multi-waypoint.ts
+```
 
 ## Documentation
 
-- [API Reference](docs/guides/api-reference.md)
-- [Getting Started Guide](docs/guides/getting-started.md)
-- [Algorithm Overview](docs/guides/algorithm-overview.md)
+- **[Implementation Status](docs/implementation-status.md)**: Detailed status of all features
+- **[Examples README](examples/README.md)**: Usage guide with visualization examples
+- API Reference: Coming soon
+- Algorithm Overview: Coming soon
 
 ## Research & References
 

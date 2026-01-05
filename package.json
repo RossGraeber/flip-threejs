@@ -85,6 +85,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.4.2",
+    "terser": "^5.44.1",
     "typedoc": "^0.27.5",
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
