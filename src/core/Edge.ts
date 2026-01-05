@@ -1,4 +1,4 @@
-import type { EdgeId, HalfedgeId, VertexId, FaceId } from '../types';
+import type { EdgeId, HalfedgeId } from '../types';
 import type { Vertex } from './Vertex';
 import type { Face } from './Face';
 

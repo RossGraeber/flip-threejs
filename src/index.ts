@@ -12,6 +12,7 @@ export { createVertexId, createEdgeId, createHalfedgeId, createFaceId } from './
 export { Vertex } from './core/Vertex';
 export { Edge, Halfedge } from './core/Edge';
 export { Face } from './core/Face';
+export { IntrinsicTriangulation } from './core/IntrinsicTriangulation';
 
 // Geometry utilities
 export { Vector2 } from './geometry/Vector2';

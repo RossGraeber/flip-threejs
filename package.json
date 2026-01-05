@@ -27,15 +27,20 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "test": "vitest",
+    "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "lint": "eslint src --ext .ts",
-    "lint:fix": "eslint src --ext .ts --fix",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "docs": "typedoc --out docs/api src/index.ts",
-    "prepublishOnly": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "quality": "npm run lint && npm run format:check && npm run typecheck",
+    "quality:fix": "npm run lint:fix && npm run format",
+    "validate": "npm run quality && npm run test:run && npm run build",
+    "prepare": "husky",
+    "prepublishOnly": "npm run validate"
   },
   "keywords": [
     "geodesic",
@@ -77,11 +82,19 @@
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.4.2",
     "typedoc": "^0.27.5",
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.3.0",
     "vitest": "^2.1.8"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

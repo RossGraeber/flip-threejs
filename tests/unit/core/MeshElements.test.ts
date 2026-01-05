@@ -65,7 +65,6 @@ describe('Mesh Elements', () => {
 
     it('should get source vertex from twin', () => {
       const sourceVertex = new Vertex(createVertexId(1), { x: 1, y: 0, z: 0 });
-      const twinEdge = new Edge(createEdgeId(1), null as any, 1.0);
       const twin = new Halfedge(createHalfedgeId(1), sourceVertex, edge);
 
       halfedge.twin = twin;
