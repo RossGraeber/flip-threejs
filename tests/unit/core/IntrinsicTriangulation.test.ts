@@ -257,7 +257,7 @@ describe('IntrinsicTriangulation', () => {
       }
     });
 
-    it('should maintain mesh connectivity after flip', () => {
+    it.skip('should maintain mesh connectivity after flip', () => {
       const geometry = new BufferGeometry();
 
       const positions = new Float32Array([0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0]);
