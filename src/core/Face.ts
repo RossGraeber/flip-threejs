@@ -22,9 +22,10 @@ export class Face {
     /**
      * One of the halfedges bounding this face.
      */
-    halfedge: Halfedge
+    halfedge?: Halfedge
   ) {
-    this.halfedge = halfedge;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.halfedge = halfedge || (null as any);
   }
 
   /**

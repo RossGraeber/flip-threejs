@@ -1,4 +1,4 @@
-import type { Vector2, Vector3 } from 'three';
+import type { Vector3 } from 'three';
 
 /**
  * Utility functions for geometric computations.
@@ -95,7 +95,7 @@ export class GeometricUtils {
     p0: Vector3,
     p1: Vector3,
     p2: Vector3
-  ): Vector3 {
+  ): { x: number; y: number; z: number } {
     return {
       x: u * p0.x + v * p1.x + w * p2.x,
       y: u * p0.y + v * p1.y + w * p2.y,
@@ -154,22 +154,22 @@ export class GeometricUtils {
     edgeAB: number,
     edgeBC: number,
     edgeCA: number
-  ): [Vector2, Vector2, Vector2] {
+  ): [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }] {
     if (!GeometricUtils.isValidTriangle(edgeAB, edgeBC, edgeCA)) {
       throw new Error('Cannot layout invalid triangle');
     }
 
     // Place A at origin
-    const A: Vector2 = { x: 0, y: 0 };
+    const A = { x: 0, y: 0 };
 
     // Place B along positive x-axis
-    const B: Vector2 = { x: edgeAB, y: 0 };
+    const B = { x: edgeAB, y: 0 };
 
     // Compute angle at A using law of cosines
     const angleA = GeometricUtils.angleFromSides(edgeBC, edgeAB, edgeCA);
 
     // Place C using polar coordinates from A
-    const C: Vector2 = { x: edgeCA * Math.cos(angleA), y: edgeCA * Math.sin(angleA) };
+    const C = { x: edgeCA * Math.cos(angleA), y: edgeCA * Math.sin(angleA) };
 
     return [A, B, C];
   }
@@ -178,14 +178,18 @@ export class GeometricUtils {
    * Computes the signed area of a triangle given three 2D points.
    * Positive if vertices are counter-clockwise, negative if clockwise.
    */
-  static signedArea2D(p0: Vector2, p1: Vector2, p2: Vector2): number {
+  static signedArea2D(
+    p0: { x: number; y: number },
+    p1: { x: number; y: number },
+    p2: { x: number; y: number }
+  ): number {
     return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y)) / 2;
   }
 
   /**
    * Computes the 2D cross product (z-component) of two 2D vectors.
    */
-  static cross2D(v1: Vector2, v2: Vector2): number {
+  static cross2D(v1: { x: number; y: number }, v2: { x: number; y: number }): number {
     return v1.x * v2.y - v1.y * v2.x;
   }
 
@@ -193,7 +197,12 @@ export class GeometricUtils {
    * Checks if a quadrilateral formed by four points is convex.
    * Points should be in order around the quadrilateral.
    */
-  static isConvexQuad(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2): boolean {
+  static isConvexQuad(
+    p0: { x: number; y: number },
+    p1: { x: number; y: number },
+    p2: { x: number; y: number },
+    p3: { x: number; y: number }
+  ): boolean {
     // A quadrilateral is convex if all cross products have the same sign
     const v01 = { x: p1.x - p0.x, y: p1.y - p0.y };
     const v12 = { x: p2.x - p1.x, y: p2.y - p1.y };
@@ -214,7 +223,11 @@ export class GeometricUtils {
   /**
    * Computes the circumcenter of a triangle given its three vertices.
    */
-  static circumcenter2D(p0: Vector2, p1: Vector2, p2: Vector2): { x: number; y: number } {
+  static circumcenter2D(
+    p0: { x: number; y: number },
+    p1: { x: number; y: number },
+    p2: { x: number; y: number }
+  ): { x: number; y: number } {
     const ax = p1.x - p0.x;
     const ay = p1.y - p0.y;
     const bx = p2.x - p0.x;
