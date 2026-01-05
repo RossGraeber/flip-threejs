@@ -213,4 +213,37 @@ export class Face {
 
     return null;
   }
+
+  /**
+   * Gets the angle at the vertex that is NOT the given vertex and NOT adjacent to it.
+   * Used for Delaunay condition checking: given an edge vertex, returns the angle
+   * at the third vertex of the triangle (the vertex not on that edge).
+   */
+  getOppositeAngle(edgeVertex: Vertex): number | null {
+    const angles = this.getAngles();
+    const vertices = this.getVertices();
+
+    if (!angles || !vertices) {
+      return null;
+    }
+
+    // Find the vertex that is opposite to the edge containing edgeVertex
+    // In a triangle, if we have an edge, the third vertex is the one
+    // that doesn't share that edge
+    const oppositeHe = this.getOppositeHalfedge(edgeVertex);
+    if (!oppositeHe) {
+      return null;
+    }
+
+    // The opposite halfedge points TO the opposite vertex
+    const oppositeVertex = oppositeHe.vertex;
+
+    // Find the index of the opposite vertex
+    const index = vertices.findIndex((v) => v.id === oppositeVertex.id);
+    if (index === -1) {
+      return null;
+    }
+
+    return angles[index]!;
+  }
 }
