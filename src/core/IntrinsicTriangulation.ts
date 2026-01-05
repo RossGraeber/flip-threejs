@@ -1,4 +1,4 @@
-import type { BufferGeometry } from 'three';
+import { Vector3, type BufferGeometry } from 'three';
 import { Vertex } from './Vertex';
 import { Edge, Halfedge } from './Edge';
 import { Face } from './Face';
@@ -60,11 +60,7 @@ export class IntrinsicTriangulation {
       const x = positions.getX(i);
       const y = positions.getY(i);
       const z = positions.getZ(i);
-      const vertex = new Vertex(createVertexId(triangulation.nextVertexId++), {
-        x,
-        y,
-        z,
-      });
+      const vertex = new Vertex(createVertexId(triangulation.nextVertexId++), new Vector3(x, y, z));
       triangulation.vertices.set(vertex.id, vertex);
     }
 

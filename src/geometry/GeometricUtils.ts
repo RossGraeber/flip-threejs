@@ -1,4 +1,5 @@
 import type { Vector3 } from 'three';
+import { Vector2 } from 'three';
 
 /**
  * Utility functions for geometric computations.
@@ -178,18 +179,14 @@ export class GeometricUtils {
    * Computes the signed area of a triangle given three 2D points.
    * Positive if vertices are counter-clockwise, negative if clockwise.
    */
-  static signedArea2D(
-    p0: { x: number; y: number },
-    p1: { x: number; y: number },
-    p2: { x: number; y: number }
-  ): number {
+  static signedArea2D(p0: Vector2, p1: Vector2, p2: Vector2): number {
     return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y)) / 2;
   }
 
   /**
    * Computes the 2D cross product (z-component) of two 2D vectors.
    */
-  static cross2D(v1: { x: number; y: number }, v2: { x: number; y: number }): number {
+  static cross2D(v1: Vector2, v2: Vector2): number {
     return v1.x * v2.y - v1.y * v2.x;
   }
 
@@ -197,17 +194,12 @@ export class GeometricUtils {
    * Checks if a quadrilateral formed by four points is convex.
    * Points should be in order around the quadrilateral.
    */
-  static isConvexQuad(
-    p0: { x: number; y: number },
-    p1: { x: number; y: number },
-    p2: { x: number; y: number },
-    p3: { x: number; y: number }
-  ): boolean {
+  static isConvexQuad(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2): boolean {
     // A quadrilateral is convex if all cross products have the same sign
-    const v01 = { x: p1.x - p0.x, y: p1.y - p0.y };
-    const v12 = { x: p2.x - p1.x, y: p2.y - p1.y };
-    const v23 = { x: p3.x - p2.x, y: p3.y - p2.y };
-    const v30 = { x: p0.x - p3.x, y: p0.y - p3.y };
+    const v01 = new Vector2(p1.x - p0.x, p1.y - p0.y);
+    const v12 = new Vector2(p2.x - p1.x, p2.y - p1.y);
+    const v23 = new Vector2(p3.x - p2.x, p3.y - p2.y);
+    const v30 = new Vector2(p0.x - p3.x, p0.y - p3.y);
 
     const cross1 = GeometricUtils.cross2D(v01, v12);
     const cross2 = GeometricUtils.cross2D(v12, v23);
@@ -223,11 +215,7 @@ export class GeometricUtils {
   /**
    * Computes the circumcenter of a triangle given its three vertices.
    */
-  static circumcenter2D(
-    p0: { x: number; y: number },
-    p1: { x: number; y: number },
-    p2: { x: number; y: number }
-  ): { x: number; y: number } {
+  static circumcenter2D(p0: Vector2, p1: Vector2, p2: Vector2): Vector2 {
     const ax = p1.x - p0.x;
     const ay = p1.y - p0.y;
     const bx = p2.x - p0.x;
@@ -244,6 +232,6 @@ export class GeometricUtils {
     const cx = (by * aSq - ay * bSq) / denom;
     const cy = (ax * bSq - bx * aSq) / denom;
 
-    return { x: p0.x + cx, y: p0.y + cy };
+    return new Vector2(p0.x + cx, p0.y + cy);
   }
 }
