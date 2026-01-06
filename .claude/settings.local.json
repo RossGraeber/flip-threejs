@@ -4,7 +4,11 @@
       "Bash(npm run format:*)",
       "Bash(npm run typecheck:*)",
       "Bash(npm run build:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest run)",
+      "Bash(npx vitest run --reporter=basic)",
+      "Bash(npx vitest:*)"
     ]
   }
 }

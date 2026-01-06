@@ -253,15 +253,15 @@ export class DijkstraShortestPath {
     let currentHe = startHe;
 
     do {
-      // The edge connects this vertex to currentHe.next.vertex
+      // currentHe is an outgoing halfedge from `vertex`
+      // currentHe.vertex is the target (the neighbor)
       const edge = currentHe.edge;
-      const nextVertex = currentHe.next?.vertex;
+      const neighborVertex = currentHe.vertex;
 
-      if (nextVertex) {
-        neighbors.push({ vertex: nextVertex, edge });
-      }
+      neighbors.push({ vertex: neighborVertex, edge });
 
-      // Move to next outgoing halfedge
+      // Move to next outgoing halfedge from `vertex`
+      // Go to twin (points back to `vertex`), then to next (points to next neighbor)
       const twin = currentHe.twin;
       if (!twin || !twin.next) {
         break; // Boundary
@@ -358,14 +358,13 @@ export class DijkstraShortestPath {
     let currentHe = startHe;
 
     do {
-      // Check if this halfedge goes to v2
-      const nextVertex = currentHe.next?.vertex;
-
-      if (nextVertex && nextVertex.id === v2.id) {
+      // currentHe is an outgoing halfedge from v1
+      // currentHe.vertex is the target - check if it's v2
+      if (currentHe.vertex.id === v2.id) {
         return currentHe.edge;
       }
 
-      // Move to next outgoing halfedge
+      // Move to next outgoing halfedge from v1
       const twin = currentHe.twin;
       if (!twin || !twin.next) {
         break;

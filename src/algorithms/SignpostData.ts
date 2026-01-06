@@ -96,8 +96,10 @@ export class SignpostData {
         }
       }
 
-      // Record angle for the next halfedge
-      this.signposts.set(next.id, currentAngle);
+      // Record angle for the next halfedge (but don't overwrite the start halfedge)
+      if (next.id !== startHalfedge.id) {
+        this.signposts.set(next.id, currentAngle);
+      }
 
       currentHalfedge = next;
     } while (currentHalfedge.id !== startHalfedge.id);
@@ -119,7 +121,7 @@ export class SignpostData {
   }
 
   /**
-   * Gets the angle between two halfedges that share a vertex.
+   * Gets the angle between two halfedges that share a source vertex.
    * The angle is measured counter-clockwise from 'from' to 'to'.
    *
    * @param from - Starting halfedge
@@ -127,8 +129,12 @@ export class SignpostData {
    * @returns Angle in radians
    */
   getAngleBetween(from: Halfedge, to: Halfedge): number {
-    if (from.vertex.id !== to.vertex.id) {
-      throw new Error('Halfedges must share a vertex');
+    // Get source vertices (where the halfedges start from)
+    const fromSource = from.getSourceVertex();
+    const toSource = to.getSourceVertex();
+
+    if (!fromSource || !toSource || fromSource.id !== toSource.id) {
+      throw new Error('Halfedges must share a source vertex');
     }
 
     const angleFrom = this.getAngle(from);
@@ -235,14 +241,23 @@ export class SignpostData {
 
     const normAngle = normalizeAngle(angle);
     const normStart = normalizeAngle(start);
-    const normEnd = normalizeAngle(end);
+    let normEnd = normalizeAngle(end);
 
-    if (normStart <= normEnd) {
+    // Handle the special case where end is 2π (which normalizes to 0)
+    // In this case, we want the full circle range [start, 2π)
+    if (normEnd === 0 && end > 0) {
+      normEnd = 2 * Math.PI;
+    }
+
+    if (normStart < normEnd) {
       // No wraparound
       return normAngle >= normStart && normAngle < normEnd;
-    } else {
+    } else if (normStart > normEnd) {
       // Wraparound at 2π
       return normAngle >= normStart || normAngle < normEnd;
+    } else {
+      // start === end - empty range
+      return false;
     }
   }
 

@@ -75,13 +75,23 @@ export class GeodesicPath {
     let currentVertex = this.startVertex;
 
     for (const edge of this.edges) {
-      // Get the other vertex of this edge
-      const edgeVertices = edge.getVertices();
-      const v0 = edgeVertices[0]!;
-      const v1 = edgeVertices[1]!;
-      const nextVertex = v0.id === currentVertex.id ? v1 : v0;
-      vertices.push(nextVertex);
-      currentVertex = nextVertex;
+      // Get the other vertex of this edge using the edge's method
+      const nextVertex = edge.getOtherVertex(currentVertex);
+      if (!nextVertex) {
+        // Fallback: try to find the other vertex by ID comparison
+        const edgeVertices = edge.getVertices();
+        const v0 = edgeVertices[0];
+        const v1 = edgeVertices[1];
+        if (!v0 || !v1) {
+          throw new Error('Edge has invalid vertices');
+        }
+        const fallbackNext = v0.id === currentVertex.id ? v1 : v0;
+        vertices.push(fallbackNext);
+        currentVertex = fallbackNext;
+      } else {
+        vertices.push(nextVertex);
+        currentVertex = nextVertex;
+      }
     }
 
     return vertices;
