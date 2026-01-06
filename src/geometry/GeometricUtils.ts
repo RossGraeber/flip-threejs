@@ -234,4 +234,127 @@ export class GeometricUtils {
 
     return new Vector2(p0.x + cx, p0.y + cy);
   }
+
+  /**
+   * Computes the angle between two 2D vectors.
+   * Result is in the range [-π, π].
+   *
+   * @param v1 - First vector
+   * @param v2 - Second vector
+   * @returns Signed angle from v1 to v2 in radians
+   */
+  static angleBetweenVectors2D(v1: { x: number; y: number }, v2: { x: number; y: number }): number {
+    return Math.atan2(v2.y * v1.x - v2.x * v1.y, v2.x * v1.x + v2.y * v1.y);
+  }
+
+  /**
+   * Traces a ray across a triangle and finds the exit point.
+   * Returns null if the ray doesn't intersect any edge (shouldn't happen for valid inputs).
+   *
+   * @param entryPoint - Starting point in 2D
+   * @param direction - Direction vector (will be normalized)
+   * @param triangle - Triangle vertices [p0, p1, p2] in 2D
+   * @returns Exit point and which edge it crosses (0: p0-p1, 1: p1-p2, 2: p2-p0), or null
+   */
+  static traceRayAcrossTriangle(
+    entryPoint: { x: number; y: number },
+    direction: { x: number; y: number },
+    triangle: [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }]
+  ): { exitPoint: { x: number; y: number }; exitEdge: 0 | 1 | 2 } | null {
+    // Normalize direction
+    const dirLength = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (dirLength < 1e-10) {
+      return null;
+    }
+    const dir = { x: direction.x / dirLength, y: direction.y / dirLength };
+
+    const [p0, p1, p2] = triangle;
+
+    // Check intersection with each edge
+    const edges: Array<[{ x: number; y: number }, { x: number; y: number }, 0 | 1 | 2]> = [
+      [p0, p1, 0],
+      [p1, p2, 1],
+      [p2, p0, 2],
+    ];
+
+    let closestIntersection: {
+      point: { x: number; y: number };
+      edge: 0 | 1 | 2;
+      t: number;
+    } | null = null;
+
+    for (const [edgeStart, edgeEnd, edgeIndex] of edges) {
+      const intersection = this.raySegmentIntersection(entryPoint, dir, edgeStart, edgeEnd);
+
+      if (intersection !== null && intersection.t > 1e-10) {
+        // t > epsilon to avoid intersecting the entry edge
+        if (closestIntersection === null || intersection.t < closestIntersection.t) {
+          closestIntersection = {
+            point: intersection.point,
+            edge: edgeIndex,
+            t: intersection.t,
+          };
+        }
+      }
+    }
+
+    if (closestIntersection === null) {
+      return null;
+    }
+
+    return {
+      exitPoint: closestIntersection.point,
+      exitEdge: closestIntersection.edge,
+    };
+  }
+
+  /**
+   * Computes the intersection of a ray with a line segment.
+   *
+   * @param rayOrigin - Origin of the ray
+   * @param rayDir - Direction of the ray (should be normalized)
+   * @param segStart - Start point of the segment
+   * @param segEnd - End point of the segment
+   * @returns Intersection point and parameter t along ray, or null if no intersection
+   */
+  private static raySegmentIntersection(
+    rayOrigin: { x: number; y: number },
+    rayDir: { x: number; y: number },
+    segStart: { x: number; y: number },
+    segEnd: { x: number; y: number }
+  ): { point: { x: number; y: number }; t: number } | null {
+    // Ray: P = rayOrigin + t * rayDir
+    // Segment: Q = segStart + s * (segEnd - segStart), s ∈ [0, 1]
+    //
+    // Solve: rayOrigin + t * rayDir = segStart + s * (segEnd - segStart)
+
+    const segDir = { x: segEnd.x - segStart.x, y: segEnd.y - segStart.y };
+    const diff = { x: segStart.x - rayOrigin.x, y: segStart.y - rayOrigin.y };
+
+    // Cross products (inline to avoid type issues)
+    const rayDirCrossSegDir = rayDir.x * segDir.y - rayDir.y * segDir.x;
+
+    if (Math.abs(rayDirCrossSegDir) < 1e-10) {
+      // Parallel or collinear
+      return null;
+    }
+
+    const t = (diff.x * segDir.y - diff.y * segDir.x) / rayDirCrossSegDir;
+    const s = (diff.x * rayDir.y - diff.y * rayDir.x) / rayDirCrossSegDir;
+
+    // Check if intersection is on the segment (s ∈ [0, 1]) and in ray direction (t ≥ 0)
+    if (s >= -1e-10 && s <= 1 + 1e-10 && t >= -1e-10) {
+      // Clamp s to [0, 1] to avoid floating point errors
+      const clampedS = Math.max(0, Math.min(1, s));
+      return {
+        point: {
+          x: segStart.x + clampedS * segDir.x,
+          y: segStart.y + clampedS * segDir.y,
+        },
+        t,
+      };
+    }
+
+    return null;
+  }
 }

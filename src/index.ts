@@ -8,6 +8,9 @@
 export type { VertexId, EdgeId, HalfedgeId, FaceId } from './types';
 export { createVertexId, createEdgeId, createHalfedgeId, createFaceId } from './types';
 
+// Path types
+export type { FlipEdgeNetworkOptions, DijkstraResult, FlipOutStats, PathExportData } from './types';
+
 // Core mesh elements
 export { Vertex } from './core/Vertex';
 export { Edge, Halfedge } from './core/Edge';
@@ -16,6 +19,15 @@ export { IntrinsicTriangulation } from './core/IntrinsicTriangulation';
 
 // Geometry utilities
 export { GeometricUtils } from './geometry/GeometricUtils';
+export { SurfacePoint } from './geometry/SurfacePoint';
+export { TraceGeodesic } from './geometry/TraceGeodesic';
+
+// Algorithm classes
+export { FlipEdgeNetwork } from './algorithms/FlipEdgeNetwork';
+export { GeodesicPath } from './algorithms/GeodesicPath';
+export { DijkstraShortestPath } from './algorithms/DijkstraShortestPath';
+export { SignpostData } from './algorithms/SignpostData';
+export { BezierSubdivision } from './algorithms/BezierSubdivision';
 
 // Version
 export const VERSION = '0.1.1';
