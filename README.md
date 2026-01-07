@@ -300,8 +300,8 @@ If you use this library in academic work, please cite the original paper:
 
 ## Support
 
-- [GitHub Issues](https://github.com/rossgriswold/flip-threejs/issues)
-- [Discussions](https://github.com/rossgriswold/flip-threejs/discussions)
+- [GitHub Issues](https://github.com/RossGraeber/flip-threejs/issues)
+- [Discussions](https://github.com/RossGraeber/flip-threejs/discussions)
 
 ---
 
