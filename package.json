@@ -1,6 +1,6 @@
 {
   "name": "flip-threejs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TypeScript implementation of the FlipOut geodesic algorithm for Three.js triangle meshes",
   "type": "module",
   "main": "./dist/flip-threejs.cjs",

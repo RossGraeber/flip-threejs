@@ -129,6 +129,27 @@ const points3D = network.getPathPolyline3D();
 const allEdges = network.getAllEdgePolyline3D();
 ```
 
+### Export & Visualization
+
+```typescript
+import { PathExport, FlipEdgeNetwork } from 'flip-threejs';
+
+// Export to JSON (for saving/serialization)
+const data = PathExport.toJSON(network);
+const json = JSON.stringify(data);
+
+// Reconstruct from JSON
+const restored = PathExport.fromJSON(JSON.parse(json), geometry, FlipEdgeNetwork);
+
+// Create Three.js visualization objects
+const pathLine = PathExport.toLineSegments(network); // Path as LineSegments
+const meshWireframe = PathExport.toDebugLineSegments(network); // All edges
+
+// Or get raw BufferGeometry for custom materials
+const pathGeometry = PathExport.toLineGeometry(network);
+const debugGeometry = PathExport.toDebugGeometry(network);
+```
+
 ### Advanced Features
 
 ```typescript
