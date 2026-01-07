@@ -37,4 +37,4 @@ export { SignpostData } from './algorithms/SignpostData';
 export { BezierSubdivision } from './algorithms/BezierSubdivision';
 
 // Version
-export const VERSION = '0.1.2';
+export const VERSION = '0.2.0';
