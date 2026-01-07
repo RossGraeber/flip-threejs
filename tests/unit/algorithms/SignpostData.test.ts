@@ -254,11 +254,7 @@ describe('SignpostData', () => {
   });
 
   describe('updateAfterFlip', () => {
-    it.skip('should update signposts after edge flip', () => {
-      // Note: This test is skipped because flipEdge() has a known issue with
-      // halfedge connectivity that causes infinite loops when iterating around
-      // vertices after a flip. This needs to be fixed in IntrinsicTriangulation.flipEdge().
-
+    it('should update signposts after edge flip', () => {
       // Find a flippable edge
       const edges = triangulation.getEdges();
       let flippableEdge = null;

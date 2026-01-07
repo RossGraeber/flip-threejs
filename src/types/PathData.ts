@@ -146,3 +146,19 @@ export interface PathExportData {
    */
   stats?: FlipOutStats;
 }
+
+/**
+ * Extended export format that includes data needed for full reconstruction.
+ */
+export interface PathExportDataFull extends PathExportData {
+  /**
+   * Waypoint vertex IDs for each path (start and end vertices).
+   * Used to reconstruct paths via Dijkstra.
+   */
+  waypoints: number[][];
+
+  /**
+   * Options used during creation (optional).
+   */
+  options?: FlipEdgeNetworkOptions;
+}
