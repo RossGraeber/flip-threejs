@@ -7,4 +7,5 @@ export type {
   DijkstraResult,
   FlipOutStats,
   PathExportData,
+  PathExportDataFull,
 } from './PathData';

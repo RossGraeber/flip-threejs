@@ -169,16 +169,17 @@ The flip-threejs library is a TypeScript implementation of the FlipOut algorithm
 - `delaunayMaxInsertions` - Max Steiner points
 - `delaunayMaxRounds` - Max refinement iterations
 
-#### 3. PathExport Utilities
-**Priority**: Low
-**Blocking**: None (convenience feature)
+#### ~~3. PathExport Utilities~~ ✅ IMPLEMENTED
+**Status**: Complete
 
-**Required functionality**:
-- `PathExport.toJSON(network)` - Export to JSON
-- `PathExport.fromJSON(json)` - Import from JSON
-- `PathExport.toLineGeometry(network)` - Three.js geometry
-- `PathExport.toDebugGeometry(network)` - Debug visualization
-- Statistics export (FlipOutStats type already defined)
+**Implemented functionality**:
+- `PathExport.toJSON(network, stats?)` - Export to JSON (PathExportDataFull)
+- `PathExport.fromJSON(data, geometry, FlipEdgeNetwork, options?)` - Full reconstruction
+- `PathExport.toLineGeometry(network)` - BufferGeometry for paths
+- `PathExport.toDebugGeometry(network)` - BufferGeometry for all mesh edges
+- `PathExport.toLine(network, material?)` - Complete Line object
+- `PathExport.toLineSegments(network, material?)` - Complete LineSegments object
+- `PathExport.toDebugLineSegments(network, material?)` - Debug LineSegments object
 
 #### 4. Comprehensive Testing
 **Priority**: High

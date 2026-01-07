@@ -212,6 +212,34 @@ export class IntrinsicTriangulation {
    * Returns true if the flip was successful, false otherwise.
    *
    * Based on standard halfedge edge flip algorithm.
+   *
+   * Before flip (edge connects vA to vB):
+   *
+   *         vC
+   *        /|\
+   *       / | \
+   *      /  h  \
+   *     / f0|   \
+   *   vA----|----vB
+   *     \ f1|   /
+   *      \hTwin/
+   *       \ | /
+   *        \|/
+   *        vD
+   *
+   * After flip (edge connects vC to vD):
+   *
+   *         vC
+   *        / \
+   *       / f0\
+   *      /  h  \
+   *     /   |   \
+   *   vA    |    vB
+   *     \   |   /
+   *      \hTwin/
+   *       \ f1/
+   *        \ /
+   *        vD
    */
   flipEdge(edge: Edge): boolean {
     if (!edge.canFlip()) {
@@ -225,22 +253,19 @@ export class IntrinsicTriangulation {
       return false; // Boundary edge
     }
 
-    // Get the 4 surrounding halfedges
-    const hNext = h.next!;
-    const hPrev = h.prev!;
-    const hTwinNext = hTwin.next!;
-    const hTwinPrev = hTwin.prev!;
+    // Get the 4 surrounding halfedges (before any changes)
+    // Face f0: h -> hNext -> hPrev -> h
+    // Face f1: hTwin -> hTwinNext -> hTwinPrev -> hTwin
+    const hNext = h.next!; // vB -> vC
+    const hPrev = h.prev!; // vC -> vA
+    const hTwinNext = hTwin.next!; // vA -> vD
+    const hTwinPrev = hTwin.prev!; // vD -> vB
 
     // Get the 4 vertices of the quad
-    // Current edge connects h's source to h's target
-    const vSource = h.getSourceVertex();
-    const vTarget = h.vertex;
-    const vLeft = hNext.vertex; // Third vertex in h's triangle
-    const vRight = hTwinNext.vertex; // Third vertex in hTwin's triangle
-
-    if (!vSource) {
-      return false;
-    }
+    const vA = hTwin.vertex; // h's source (hTwin's target)
+    const vB = h.vertex; // h's target
+    const vC = hNext.vertex; // Third vertex in h's triangle
+    const vD = hTwinNext.vertex; // Third vertex in hTwin's triangle
 
     // Get faces
     const f0 = h.face;
@@ -250,52 +275,71 @@ export class IntrinsicTriangulation {
       return false;
     }
 
-    // Update edge length (new edge connects vLeft to vRight)
-    const dx = vRight.position.x - vLeft.position.x;
-    const dy = vRight.position.y - vLeft.position.y;
-    const dz = vRight.position.z - vLeft.position.z;
+    // Update edge length (new edge connects vC to vD)
+    const dx = vD.position.x - vC.position.x;
+    const dy = vD.position.y - vC.position.y;
+    const dz = vD.position.z - vC.position.z;
     edge.length = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    // Perform the flip
-    // New edge: h goes from vLeft to vRight, hTwin goes from vRight to vLeft
+    // After flip:
+    // h: vC -> vD
+    // hTwin: vD -> vC
+    //
+    // New face f0: h -> hTwinPrev -> hNext -> h
+    //   h: vC -> vD
+    //   hTwinPrev: vD -> vB
+    //   hNext: vB -> vC
+    //   Cycle: vC -> vD -> vB -> vC ✓
+    //
+    // New face f1: hTwin -> hPrev -> hTwinNext -> hTwin
+    //   hTwin: vD -> vC
+    //   hPrev: vC -> vA
+    //   hTwinNext: vA -> vD
+    //   Cycle: vD -> vC -> vA -> vD ✓
 
-    // Update h
-    h.vertex = vRight;
-    h.next = hPrev;
-    h.prev = hTwinNext;
+    // Update halfedge targets
+    h.vertex = vD;
+    hTwin.vertex = vC;
 
-    // Update hTwin
-    hTwin.vertex = vLeft;
-    hTwin.next = hTwinPrev;
-    hTwin.prev = hNext;
+    // Set up face f0 cycle: h -> hTwinPrev -> hNext -> h
+    h.next = hTwinPrev;
+    h.prev = hNext;
+    hTwinPrev.next = hNext;
+    hTwinPrev.prev = h;
+    hNext.next = h;
+    hNext.prev = hTwinPrev;
 
-    // Update surrounding halfedges
-    hNext.next = hTwin;
-    hNext.prev = hPrev;
-
-    hPrev.next = h;
-    hPrev.prev = hTwinNext;
-
-    hTwinNext.next = h;
-    hTwinNext.prev = hTwinPrev;
-
-    hTwinPrev.next = hTwin;
-    hTwinPrev.prev = hNext;
+    // Set up face f1 cycle: hTwin -> hPrev -> hTwinNext -> hTwin
+    hTwin.next = hPrev;
+    hTwin.prev = hTwinNext;
+    hPrev.next = hTwinNext;
+    hPrev.prev = hTwin;
+    hTwinNext.next = hTwin;
+    hTwinNext.prev = hPrev;
 
     // Update face assignments
-    hNext.face = f1;
-    hTwinNext.face = f0;
+    h.face = f0;
+    hTwinPrev.face = f0;
+    hNext.face = f0;
+
+    hTwin.face = f1;
+    hPrev.face = f1;
+    hTwinNext.face = f1;
 
     // Update face halfedges
     f0.halfedge = h;
     f1.halfedge = hTwin;
 
     // Update vertex halfedges if they pointed to the flipped edge
-    if (vSource.halfedge === h) {
-      vSource.halfedge = hPrev;
+    // vA's outgoing halfedge might have been h (vA->vB). Now h goes vC->vD.
+    // We need an outgoing halfedge from vA. hTwinNext goes vA->vD.
+    if (vA.halfedge === h) {
+      vA.halfedge = hTwinNext;
     }
-    if (vTarget.halfedge === hTwin) {
-      vTarget.halfedge = hTwinPrev;
+    // vB's outgoing halfedge might have been hTwin (vB->vA). Now hTwin goes vD->vC.
+    // We need an outgoing halfedge from vB. hNext goes vB->vC.
+    if (vB.halfedge === hTwin) {
+      vB.halfedge = hNext;
     }
 
     return true;
