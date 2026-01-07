@@ -308,8 +308,10 @@ These APIs may change:
 9. **Advanced features** - Heat method, vector heat method, etc.
 
 ## Version History
+- **0.1.2** (current) - Export types for ThreeJS
+  - All current tests passing, none skipped
 
-- **0.1.1** (current) - Core FlipOut algorithm complete
+- **0.1.1** - Core FlipOut algorithm complete
   - All TypeScript errors fixed
   - Examples and documentation added
   - BezierSubdivision basic support
