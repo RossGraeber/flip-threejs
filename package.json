@@ -1,6 +1,6 @@
 {
   "name": "flip-threejs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "TypeScript implementation of the FlipOut geodesic algorithm for Three.js triangle meshes",
   "type": "module",
   "main": "./dist/flip-threejs.cjs",
@@ -56,16 +56,16 @@
     "surface-geodesics",
     "halfedge"
   ],
-  "author": "Ross Griswold",
+  "author": "Ross Graeber",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rossgriswold/flip-threejs.git"
+    "url": "https://github.com/RossGraeber/flip-threejs.git"
   },
   "bugs": {
-    "url": "https://github.com/rossgriswold/flip-threejs/issues"
+    "url": "https://github.com/RossGraeber/flip-threejs/issues"
   },
-  "homepage": "https://github.com/rossgriswold/flip-threejs#readme",
+  "homepage": "https://github.com/RossGraeber/flip-threejs#readme",
   "engines": {
     "node": ">=18.0.0"
   },
