@@ -17,6 +17,16 @@ export type {
   PathExportDataFull,
 } from './types';
 
+// Loop types
+export type {
+  GeodesicLoopOptions,
+  OrderingOptions,
+  OrderingResult,
+  LoopStats,
+  SegmentationData,
+  LoopExportData,
+} from './types/LoopData';
+
 // Core mesh elements
 export { Vertex } from './core/Vertex';
 export { Edge, Halfedge } from './core/Edge';
@@ -36,5 +46,13 @@ export { DijkstraShortestPath } from './algorithms/DijkstraShortestPath';
 export { SignpostData } from './algorithms/SignpostData';
 export { BezierSubdivision } from './algorithms/BezierSubdivision';
 
+// Geodesic loop classes
+export { GeodesicLoop } from './algorithms/GeodesicLoop';
+export { GeodesicLoopNetwork } from './algorithms/GeodesicLoopNetwork';
+export { EdgeOrderingOptimizer } from './algorithms/EdgeOrderingOptimizer';
+export { MeshSegmentation, FaceRegion } from './algorithms/MeshSegmentation';
+export type { SegmentationResult } from './algorithms/MeshSegmentation';
+export type { LoopComputationResult } from './algorithms/GeodesicLoopNetwork';
+
 // Version
-export const VERSION = '0.2.1';
+export const VERSION = '0.2.2';
