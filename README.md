@@ -1,6 +1,6 @@
 # flip-threejs
 
-> Compute exact geodesic paths on triangle meshes using the FlipOut algorithm
+> Compute exact geodesic paths and loops on triangle meshes using the FlipOut algorithm
 
 [![npm version](https://img.shields.io/npm/v/flip-threejs.svg)](https://www.npmjs.com/package/flip-threejs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -11,10 +11,12 @@ A TypeScript library implementing the **FlipOut algorithm** for computing geodes
 ## Features
 
 - **Exact Geodesic Computation**: Find locally shortest paths on triangle meshes
+- **Geodesic Loops**: Compute closed geodesic loops through edge waypoints with mesh segmentation
 - **Three.js Integration**: Seamless integration with Three.js BufferGeometry
 - **Intrinsic Triangulation**: Work with geodesics without modifying the input mesh
 - **Multiple Path Types**: Support for paths, loops, and curve networks
 - **Geodesic Bezier Curves**: Construct smooth curves on surfaces
+- **Mesh Segmentation**: Segment mesh faces into inside/outside regions relative to loops
 - **TypeScript Native**: Full type safety with comprehensive type definitions
 - **Zero Runtime Dependencies**: Only Three.js as a peer dependency
 
@@ -63,6 +65,58 @@ const pathLine = new THREE.Line(
 );
 scene.add(pathLine);
 ```
+
+## Geodesic Loops
+
+Compute closed geodesic loops that pass through specified edges, with automatic mesh segmentation:
+
+```typescript
+import * as THREE from 'three';
+import { GeodesicLoopNetwork } from 'flip-threejs';
+
+// Create a mesh
+const geometry = new THREE.TorusGeometry(1, 0.4, 16, 32);
+
+// Specify edge indices as waypoints (edges the loop should pass through)
+const waypointEdgeIndices = [42, 87, 156];
+
+// Compute the geodesic loop
+const loopNetwork = GeodesicLoopNetwork.fromEdgeWaypoints(
+  geometry,
+  waypointEdgeIndices,
+  {
+    optimizeOrder: true,  // Auto-optimize edge visiting order
+    verbose: false
+  }
+);
+
+const result = loopNetwork.compute();
+
+// Get results
+const polyline = loopNetwork.getLoopPolyline3D();
+const segmentation = result.segmentation;
+
+console.log(`Loop length: ${result.loop.length}`);
+console.log(`Inside faces: ${segmentation.insideFaces.length}`);
+console.log(`Outside faces: ${segmentation.outsideFaces.length}`);
+
+// Visualize the loop
+const loopPoints = polyline.map(p => new THREE.Vector3(p.x, p.y, p.z));
+const loopGeometry = new THREE.BufferGeometry().setFromPoints(loopPoints);
+const loopLine = new THREE.LineLoop(
+  loopGeometry,
+  new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 2 })
+);
+scene.add(loopLine);
+```
+
+### Loop Features
+
+- **Edge Waypoints**: Specify edges the loop should pass through
+- **Order Optimization**: Automatically finds optimal edge visiting order (TSP-like)
+- **Non-Crossing**: Produces non-self-crossing loops
+- **Mesh Segmentation**: Determines inside/outside faces relative to the loop
+- **Flexible Input**: Create from edge indices, edge IDs, or Edge objects
 
 ## What is the FlipOut Algorithm?
 
@@ -165,14 +219,72 @@ const isInPath = network.edgeInPath(edge);
 const isGeodesic = network.findFlexibleJoint() === null;
 ```
 
+### Geodesic Loops API
+
+```typescript
+import {
+  GeodesicLoopNetwork,
+  IntrinsicTriangulation,
+  FaceRegion
+} from 'flip-threejs';
+
+// Create from edge indices (easiest)
+const network = GeodesicLoopNetwork.fromEdgeWaypoints(geometry, [0, 10, 20], {
+  optimizeOrder: true,      // Optimize edge visiting order (default: true)
+  maxIterations: 1000,      // Max FlipOut iterations (default: 1000)
+  convergenceThreshold: 1e-10,  // Convergence threshold
+  verbose: false,           // Log progress
+  orderingOptions: {
+    useNearestNeighbor: true,  // Greedy nearest-neighbor heuristic
+    use2Opt: true,             // Apply 2-opt improvement
+    max2OptIterations: 100,    // Max 2-opt iterations
+  }
+});
+
+// Create from edge IDs
+const triangulation = IntrinsicTriangulation.fromBufferGeometry(geometry);
+const edges = triangulation.getEdges();
+const edgeIds = [edges[0].id, edges[5].id, edges[10].id];
+const network2 = GeodesicLoopNetwork.fromEdgeIds(geometry, edgeIds);
+
+// Create from Edge objects directly
+const selectedEdges = [edges[0], edges[5], edges[10]];
+const network3 = GeodesicLoopNetwork.fromEdges(triangulation, selectedEdges);
+
+// Compute the loop
+const result = network.compute();
+
+// Result contains:
+// - result.loop: GeodesicLoop object
+// - result.segmentation: { insideFaces, outsideFaces, boundaryFaces, insideArea, outsideArea }
+// - result.stats: { iterations, initialLength, finalLength, executionTime, ... }
+
+// Get loop data
+const length = network.getLength();
+const polyline = network.getLoopPolyline3D();  // Array of {x, y, z}
+const segmentation = network.getSegmentation();
+
+// Access segmentation
+const insideFaces = segmentation.insideFaces;   // Face[]
+const outsideFaces = segmentation.outsideFaces; // Face[]
+const insideArea = segmentation.insideArea;     // number
+```
+
 ## Use Cases
 
+### Geodesic Paths
 - **Texture Seam Straightening**: Smooth jagged UV seams
 - **Surface Cutting**: Generate clean cut paths for mesh processing
 - **Geodesic Sampling**: Sample points along shortest paths
-- **Mesh Segmentation**: Create smooth region boundaries
 - **Path Planning**: Navigate on complex surfaces
 - **Computational Fabrication**: Design developable surfaces
+
+### Geodesic Loops
+- **Mesh Segmentation**: Divide meshes into regions using closed geodesic boundaries
+- **Feature Extraction**: Isolate geometric features (e.g., handles, protrusions)
+- **Mesh Editing**: Define cut boundaries for mesh manipulation
+- **Surface Parameterization**: Create smooth boundary curves for UV mapping
+- **3D Printing**: Define support-free printing regions
 
 ## Algorithm Details
 

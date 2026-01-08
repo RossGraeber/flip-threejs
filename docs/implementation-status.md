@@ -2,7 +2,7 @@
 
 This document tracks the implementation status of the flip-threejs library.
 
-**Last Updated**: 2026-01-05
+**Last Updated**: 2026-01-07
 
 ## Overview
 
@@ -80,7 +80,46 @@ The flip-threejs library is a TypeScript implementation of the FlipOut algorithm
   - Marked vertices for control points
   - `clearMarkedVertices()`, `getMarkedVertexIds()` - Vertex management
 
-#### 7. Build & Quality
+#### 7. Geodesic Loops (NEW in 0.2.1)
+- **GeodesicLoop** - Closed geodesic loop representation
+  - Edge sequence with baseVertex (where loop closes)
+  - All vertices treated as interior for geodesic shortening
+  - `getVertices()`, `getInteriorVertices()` - Vertex access
+  - `getAngleAtVertex()` - Loop angle at vertex using signpost data
+  - `getEdgesAtVertex()` - Incoming/outgoing edges at vertex
+  - `getAdjacentFaces()` - Left/right faces along the loop
+  - Length caching with `updateLength()`
+
+- **EdgeOrderingOptimizer** - TSP-like edge ordering optimization
+  - Greedy nearest-neighbor heuristic
+  - 2-opt improvement algorithm
+  - Distance matrix via Dijkstra
+  - Self-crossing detection
+  - `optimizeOrder()` - Main optimization method
+
+- **GeodesicLoopNetwork** - Main loop orchestrator
+  - Factory methods:
+    - `fromEdgeWaypoints()` - From edge indices
+    - `fromEdgeIds()` - From edge IDs
+    - `fromEdges()` - From Edge objects
+  - `compute()` - Full loop computation pipeline:
+    1. Edge ordering optimization
+    2. Initial loop construction via Dijkstra
+    3. FlipOut shortening (loop-aware)
+    4. Mesh segmentation
+  - `getLoopPolyline3D()` - 3D coordinates for visualization
+  - `getLength()` - Loop length
+  - `getSegmentation()` - Access segmentation result
+
+- **MeshSegmentation** - Face segmentation relative to loop
+  - `FaceRegion` enum: INSIDE, OUTSIDE, BOUNDARY, UNKNOWN
+  - Flood-fill from seed faces
+  - `compute()` - Returns SegmentationResult
+  - `getRegion(face)` - Get region for specific face
+  - `getFaces(region)` - Get all faces in region
+  - Area computation for each region
+
+#### 8. Build & Quality
 - TypeScript strict mode compliance (0 errors)
 - Prettier code formatting
 - ESLint configuration
@@ -88,7 +127,7 @@ The flip-threejs library is a TypeScript implementation of the FlipOut algorithm
 - Declaration file generation
 - Both ESM and CJS outputs
 
-#### 8. Documentation & Examples
+#### 9. Documentation & Examples
 - **simple-geodesic.ts** - Basic usage example
 - **multi-waypoint.ts** - Advanced multi-waypoint example
 - **examples/README.md** - Comprehensive guide with:
@@ -308,7 +347,21 @@ These APIs may change:
 9. **Advanced features** - Heat method, vector heat method, etc.
 
 ## Version History
-- **0.1.2** (current) - Export types for ThreeJS
+- **0.2.2** (current) - Geodesic Loops and Mesh Segmentation
+  - New `GeodesicLoop` class for closed geodesic loops
+  - New `GeodesicLoopNetwork` orchestrator with factory methods
+  - New `EdgeOrderingOptimizer` for TSP-like edge ordering
+  - New `MeshSegmentation` for inside/outside face segmentation
+  - Loop-aware FlipOut shortening (all vertices are interior)
+  - 278 tests passing (1 skipped)
+
+- **0.2.1** - Version number fix
+
+- **0.2.0** - First published package
+  - npm package publication
+  - Package configuration and build improvements
+
+- **0.1.2** - Export types for ThreeJS
   - All current tests passing, none skipped
 
 - **0.1.1** - Core FlipOut algorithm complete
