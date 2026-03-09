@@ -347,6 +347,8 @@ These APIs may change:
 9. **Advanced features** - Heat method, vector heat method, etc.
 
 ## Version History
+- **0.2.5** - Partial rollback
+
 - **0.2.4** - Minor bugfix in Geodesic Loops
 
 - **0.2.3** - Minor bugfix in Geodesic Loops

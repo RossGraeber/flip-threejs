@@ -59,15 +59,11 @@ export class Halfedge {
 
   /**
    * Gets the source vertex of this halfedge (the vertex it starts from).
-   * Normally this is the target vertex of the twin halfedge.
-   * For boundary halfedges (twin === null), falls back to prev.vertex which
-   * is always the source vertex within a face loop.
+   * This is the target vertex of the twin halfedge.
+   * Returns null for boundary halfedges that have no twin.
    */
   getSourceVertex(): Vertex | null {
-    if (this.twin) return this.twin.vertex;
-    // Boundary halfedge: no twin was created. Within a face loop,
-    // the previous halfedge's target is this halfedge's source.
-    return this.prev?.vertex ?? null;
+    return this.twin?.vertex ?? null;
   }
 
   /**

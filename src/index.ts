@@ -55,4 +55,4 @@ export type { SegmentationResult } from './algorithms/MeshSegmentation';
 export type { LoopComputationResult } from './algorithms/GeodesicLoopNetwork';
 
 // Version
-export const VERSION = '0.2.4';
+export const VERSION = '0.2.5';
