@@ -162,9 +162,13 @@ export class Edge {
 
   /**
    * Checks if this edge is on the boundary (has only one adjacent face).
+   * An edge is a boundary edge if it has no twin halfedge (only one face was
+   * created adjacent to it) OR if either halfedge has no face.
    */
   isBoundary(): boolean {
-    return this.halfedge.face === null || this.halfedge.twin?.face === null;
+    return (
+      this.halfedge.twin === null || this.halfedge.face === null || this.halfedge.twin.face === null
+    );
   }
 
   /**

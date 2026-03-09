@@ -132,7 +132,9 @@ export class GeodesicLoop {
         const v0 = edgeVertices[0];
         const v1 = edgeVertices[1];
         if (!v0 || !v1) {
-          throw new Error(`Edge ${i} has invalid vertices`);
+          // Boundary edge with no twin halfedge — cannot traverse further.
+          // Return the vertices accumulated so far rather than crashing.
+          break;
         }
         const fallbackNext = v0.id === currentVertex.id ? v1 : v0;
 

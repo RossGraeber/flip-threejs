@@ -44,3 +44,6 @@ docs/research/
 
 # OS
 Thumbs.db
+
+# Claude
+.claude/settings.local.json
