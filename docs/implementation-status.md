@@ -347,7 +347,9 @@ These APIs may change:
 9. **Advanced features** - Heat method, vector heat method, etc.
 
 ## Version History
-- **0.2.2** (current) - Geodesic Loops and Mesh Segmentation
+- **0.2.3** - Minor bugfix in Geodesic Loops
+
+- **0.2.2** - Geodesic Loops and Mesh Segmentation
   - New `GeodesicLoop` class for closed geodesic loops
   - New `GeodesicLoopNetwork` orchestrator with factory methods
   - New `EdgeOrderingOptimizer` for TSP-like edge ordering
